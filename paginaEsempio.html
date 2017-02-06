@@ -1,0 +1,110 @@
+
+<!DOCTYPE HTML>
+
+<html ng-app="asdShirt" ng-controller="shirtCtrl">
+	<head>
+		<title>a.sdShirt</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link href="assets/css/graph.css" rel="stylesheet" type="text/css">
+		<script language="javascript" type="text/javascript" src="assets/js/jquery.js"></script>
+		<script language="javascript" type="text/javascript" src="assets/js/jquery.flot.js"></script>
+		<script src="assets/js/angular.min.js"></script>
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">a.sdShirt</a>
+				<nav>
+					<ul>
+						<li><a href="taraIni.html">Tara iniziale</a></li>
+						<li><a href="postura.html">Postura</a></li>
+						<li><a href="grafico.html">Grafico</a></li>
+						<li><a href="notifica.html">Notifiche</a></li>
+						<li><a href="stop.html">Stop scrittura</a></li>
+            <li><a href="dati.html" class="active">Raccolta dati</a></li>
+				  </ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">Postura real-time</h2>
+							<div id="content">
+
+                <p id ="dati"> </p>
+
+
+              </div>
+							<button onclick="download_csv()">Download CSV</button>
+
+          </div>
+
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy;a.sdShirt</li><li>created by Domenico Mezzatesta &amp; Valerio Cietto</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+
+
+
+			<script>
+		  var app = angular.module('asdShirt', []);
+		  app.controller('shirtCtrl', function($scope, $http) {
+
+
+	        setInterval(function(){ richiestaDati() }, 1000);
+	        //funzione che prende i dati e genera le notifiche
+	        function richiestaDati(){
+						$http.get("http://192.168.4.1/dati")
+						.then(function(response) {
+								//First function handles success
+								var contenuto = response.data;
+
+                 document.getElementById('dati').innerHTML = document.getElementById('dati').innerHTML + "<br/>" + contenuto;
+
+							}, function(response) {
+									//in caso di errore
+									$scope.content = "Qualcosa è andato storto !";
+							});
+
+	       }
+
+		  });
+
+					var data ;
+					data = document.getElementById('dati').textContent ;
+
+					function download_csv() {
+					    var csv = 'Name,Title\n';
+					    csv += data;
+
+
+
+					    console.log(csv);
+					    var hiddenElement = document.createElement('a');
+					    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+					    hiddenElement.target = '_blank';
+					    hiddenElement.download = 'people.csv';
+					    hiddenElement.click();
+				 }
+
+			</script>
+
+	</body>
+</html>
